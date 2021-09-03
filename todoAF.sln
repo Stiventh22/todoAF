@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31613.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "todoAF.common", "todoAF.common\todoAF.common.csproj", "{B7CDADA2-2ACA-4291-A535-E88ABB3877D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "todoAF.common", "todoAF.common\todoAF.common.csproj", "{B7CDADA2-2ACA-4291-A535-E88ABB3877D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "todoAF.Function", "todoAF.Function\todoAF.Function.csproj", "{BE3BC59D-B366-4542-8061-DEA5BECF1460}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "todoAF.Function", "todoAF.Function\todoAF.Function.csproj", "{BE3BC59D-B366-4542-8061-DEA5BECF1460}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "todoAF.Tests", "todoAF.Tests\todoAF.Tests.csproj", "{61663E18-CB3F-46D9-8725-88781E15FC36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "todoAF.Tests", "todoAF.Tests\todoAF.Tests.csproj", "{61663E18-CB3F-46D9-8725-88781E15FC36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
