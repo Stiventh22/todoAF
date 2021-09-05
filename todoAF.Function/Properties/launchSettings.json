@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "todoAF.Function": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\Usuario\\AppData\\Local\\AzureFunctionsTools\\Releases\\3.23.5\\cli\\func.exe",
+      "commandLineArgs": "host start"
+    }
+  }
+}
