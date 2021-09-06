@@ -19,7 +19,7 @@ namespace WorkTimeEmp.Function.Fuctions
         [FunctionName(nameof(CreateWorkTimeEmp))]
         public static async Task<IActionResult> CreateWorkTimeEmp(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "WorkTimeEmp")] HttpRequest req,
-            [Table("WorkTimeEmp", Connection = "AzureWebJobsStorage")] CloudTable WorkTable,
+            [Table("WorkTimeEmpEntity", Connection = "AzureWebJobsStorage")] CloudTable WorkTable,
             ILogger log)
         {
             log.LogInformation("A new employee has entered");
@@ -66,7 +66,7 @@ namespace WorkTimeEmp.Function.Fuctions
         [FunctionName(nameof(UpdateWorkTimeEmp))]
         public static async Task<IActionResult> UpdateWorkTimeEmp(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "WorkTimeEmp/{IdEmployee}")] HttpRequest req,
-            [Table("WorkTimeEmp", Connection = "AzureWebJobsStorage")] CloudTable WorkTable,
+            [Table("WorkTimeEmpEntity", Connection = "AzureWebJobsStorage")] CloudTable WorkTable,
             string IdEmployee,
             ILogger log)
 
@@ -121,7 +121,7 @@ namespace WorkTimeEmp.Function.Fuctions
         [FunctionName(nameof(GetAllWorkTimeEmp))]
         public static async Task<IActionResult> GetAllWorkTimeEmp(
            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "WorkTimeEmp")] HttpRequest req,
-           [Table("WorkTimeEmp", Connection = "AzureWebJobsStorage")] CloudTable WorkTable,
+           [Table("WorkTimeEmpEntity", Connection = "AzureWebJobsStorage")] CloudTable WorkTable,
            ILogger log)
         {
             log.LogInformation("Get all Works received.");
@@ -142,7 +142,7 @@ namespace WorkTimeEmp.Function.Fuctions
         [FunctionName(nameof(GetWorkTimeEmpById))]
         public static IActionResult GetWorkTimeEmpById(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "WorkTimeEmp/{id}")] HttpRequest req,
-            [Table("WorkTimeEmp", "WORK", "{id}", Connection = "AzureWebJobsStorage")] WorkTimeEmpEntity workTimeEmpEntity,
+            [Table("WorkTimeEmpEntity", "WORK", "{id}", Connection = "AzureWebJobsStorage")] WorkTimeEmpEntity workTimeEmpEntity,
             string id,
             ILogger log)
         {
@@ -169,8 +169,8 @@ namespace WorkTimeEmp.Function.Fuctions
         [FunctionName(nameof(DeleteWorkTimeEmp))]
         public static async Task<IActionResult> DeleteWorkTimeEmp(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "WorkTimeEmp/{id}")] HttpRequest req,
-            [Table("WorkTimeEmp", "WORK", "{id}", Connection = "AzureWebJobsStorage")] WorkTimeEmpEntity workTimeEmpEntity,
-            [Table("WorkTimeEmp", Connection = "AzureWebJobsStorage")] CloudTable WorkTable,
+            [Table("WorkTimeEmpEntity", "WORK", "{id}", Connection = "AzureWebJobsStorage")] WorkTimeEmpEntity workTimeEmpEntity,
+            [Table("WorkTimeEmpEntity", Connection = "AzureWebJobsStorage")] CloudTable WorkTable,
             string id,
             ILogger log)
         {

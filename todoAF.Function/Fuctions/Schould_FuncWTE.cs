@@ -12,8 +12,8 @@ namespace WorkTimeEmp.Function.Fuctions
         [FunctionName(nameof(WorkTime))]
         public static async Task WorkTime(
             [TimerTrigger("0 */1 * * * *")] TimerInfo myTimer,
-            [Table("WorkTimeEmp", Connection = "AzureWebJobsStorage")] CloudTable timeTable,
-            [Table("WORKING", Connection = "AzureWebJobsStorage")] CloudTable timeTable2,
+            [Table("WorkTimeEmpEntity", Connection = "AzureWebJobsStorage")] CloudTable timeTable,
+            [Table("ConsolEntity", Connection = "AzureWebJobsStorage")] CloudTable timeTable2,
             ILogger log)
         {
             //Table 1
@@ -22,64 +22,117 @@ namespace WorkTimeEmp.Function.Fuctions
             TableQuerySegment<WorkTimeEmpEntity> allCheckEntity = await timeTable.ExecuteQuerySegmentedAsync(query, null);
 
             //Table 2
-            //TableQuery<ConsolidateEntity> queryConsolidate = new TableQuery<ConsolidateEntity>();
-            //TableQuerySegment<ConsolidateEntity> allCheckConsolidateEntity = await workingTimeTable.ExecuteQuerySegmentedAsync(queryConsolidate, null);
-
-            bool correctUpdate = false;
+            TableQuery<ConsolEntity> QueryConsolidate = new TableQuery<ConsolEntity>().Where(filter);
+            TableQuerySegment<ConsolEntity> ConEntity = await timeTable2.ExecuteQuerySegmentedAsync(QueryConsolidate, null);
 
             log.LogInformation($"First cicle");
-            foreach (WorkTimeEmpEntity item in allCheckEntity)
+            foreach (WorkTimeEmpEntity iterator in allCheckEntity)
             {
                 log.LogInformation($"First if");
-                if (!string.IsNullOrEmpty(item.Idemployee.ToString()) && item.Type == 0)
+                if (!string.IsNullOrEmpty(iterator.Idemployee.ToString()) && iterator.Type == 0)
                 {
                     log.LogInformation($"Second foreach");
-                    foreach (WorkTimeEmpEntity itemtwo in allCheckEntity)
+                    foreach (WorkTimeEmpEntity iteratortwo in allCheckEntity)
                     {
-                        TimeSpan dateCalculated = (itemtwo.WorkingHour - item.WorkingHour);
-                        log.LogInformation($"Thrid foreach");
-                        if (itemtwo.Idemployee.Equals(item.Idemployee) && itemtwo.Type == 1)
+                        TimeSpan dateCalculated = (iteratortwo.WorkingHour - iterator.WorkingHour);
+                        //log.LogInformation($"Thrid foreach");
+                        if (iteratortwo.Idemployee == iterator.Idemployee && iteratortwo.Type == 1)
                         {
-                            log.LogInformation($"Is this the IDRowKey, {item.RowKey}, {itemtwo.RowKey}");
+                            log.LogInformation($"Is this the IDRowKey, {iterator.RowKey}, {iteratortwo.RowKey}");
 
-                            WorkTimeEmpEntity check = new WorkTimeEmpEntity
+                            WorkTimeEmpEntity work_time = new WorkTimeEmpEntity
                             {
-                                Idemployee = itemtwo.Idemployee,    
-                                WorkingHour = Convert.ToDateTime(dateCalculated.ToString()),
-                                Type = itemtwo.Type,
+                                Idemployee = iteratortwo.Idemployee,    
+                                WorkingHour = iteratortwo.WorkingHour,
+                                Type = iteratortwo.Type,
                                 Consolidated = true,
-                                PartitionKey = "WORK",
-                                RowKey = itemtwo.RowKey,
+                                PartitionKey = "WORK_TIME",
+                                RowKey = iteratortwo.RowKey,
                                 ETag = "*"
                             };
 
+                            WorkTimeEmpEntity work_time_two = new WorkTimeEmpEntity
+                            {
+                                Idemployee = iterator.Idemployee,
+                                WorkingHour = iterator.WorkingHour,
+                                Type = iterator.Type,
+                                Consolidated = true,
+                                PartitionKey = "WORK_TIME",
+                                RowKey = iterator.RowKey,
+                                ETag = "*"
+                            };
+
+                            TableOperation updatework_time = TableOperation.Replace(work_time);
+                            await timeTable.ExecuteAsync(updatework_time);
+
+                            TableOperation updatework_time_two = TableOperation.Replace(work_time_two);
+                            await timeTable.ExecuteAsync(updatework_time_two);
                             log.LogInformation($"Is this the calculated, {dateCalculated}");
-                            TableOperation updateCheckEntity = TableOperation.Replace(check);
-                            await timeTable.ExecuteAsync(updateCheckEntity);
-                            correctUpdate = true;
-                        }
+                            await ValideWork(ConEntity, iterator, iteratortwo, dateCalculated, timeTable2);
 
-                        log.LogInformation($"I've been here, {item.RowKey}");
-                        if (correctUpdate == true)
-                        {
-                            WorkTimeEmpEntity check = new WorkTimeEmpEntity
-                            {
-                                Idemployee = item.Idemployee,
-                                WorkingHour = Convert.ToDateTime(dateCalculated.ToString()),
-                                Type = item.Type,
-                                Consolidated = true,
-                                PartitionKey = "WORK",
-                                RowKey = item.RowKey,
-                                ETag = "*"
-                            };
-                            TableOperation updateCheckEntity = TableOperation.Replace(check);
-                            await timeTable.ExecuteAsync(updateCheckEntity);
                         }
                     }
                 }
             }
         }
 
+        public static async Task ValideWork(TableQuerySegment<ConsolEntity> consolEntity, WorkTimeEmpEntity work_time, WorkTimeEmpEntity work_time_two, TimeSpan dateCalculated, CloudTable timeTable2)
+        {
+            if (consolEntity.Results.Count == 0)
+            {
+                ConsolEntity ViewWorkTimeConsolited = new ConsolEntity
+                {
+                    IdEmployee = work_time.Idemployee,
+                    DateTime = work_time.WorkingHour,
+                    MinuteTime = dateCalculated.TotalMinutes,
+                    PartitionKey = "WORK_CONDILATED",
+                    RowKey = Guid.NewGuid().ToString(),
+                    ETag = "*"
+                };
 
+                TableOperation insertCheckConsolidate = TableOperation.Insert(ViewWorkTimeConsolited);
+                await timeTable2.ExecuteAsync(insertCheckConsolidate);
+            }
+            else
+            {
+                foreach (ConsolEntity Work_Cons in consolEntity)
+                {
+                    //log.LogInformation("Actualizando consolidado segunda tabla");
+                    if (Work_Cons.IdEmployee == work_time.Idemployee)
+                    {
+
+                        ConsolEntity checkConsolidate = new ConsolEntity
+                        {
+                            IdEmployee = Work_Cons.IdEmployee,
+                            DateTime = Work_Cons.DateTime,
+                            MinuteTime = (double)(Work_Cons.MinuteTime + dateCalculated.TotalMinutes),
+                            PartitionKey = Work_Cons.PartitionKey,
+                            RowKey = Work_Cons.RowKey,
+                            ETag = "*"
+                        };
+
+                        TableOperation insertConsolidate = TableOperation.Replace(checkConsolidate);
+                        await timeTable2.ExecuteAsync(insertConsolidate);
+                    }
+                    else
+                    {
+                        ConsolEntity checkConsolidateFor = new ConsolEntity
+                        {
+                            IdEmployee = work_time.Idemployee,
+                            DateTime = work_time.WorkingHour,
+                            MinuteTime = dateCalculated.TotalMinutes,
+                            PartitionKey = "WORKINGCONSOLIDATED",
+                            RowKey = Guid.NewGuid().ToString(),
+                            ETag = "*"
+                        };
+
+                        TableOperation insertConsolidate = TableOperation.Insert(checkConsolidateFor);
+                        await timeTable2.ExecuteAsync(insertConsolidate);
+                    }
+                }
+            }
+        }
     }
+
 }
+

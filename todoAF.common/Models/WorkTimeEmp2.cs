@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WorkTimeEmp.Function.Entities
+namespace WorkTimeEmp.common.Models
 {
-    public class ConsolidateEntity
+    public class WorkTimeEmp2
     {
         public int IdEmployee { get; set; }
         public DateTime DateTime { get; set; }
