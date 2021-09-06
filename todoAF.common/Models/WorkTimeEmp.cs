@@ -1,9 +1,8 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
-using System;
+﻿using System;
 
-namespace todoAF.Function.Entities
+namespace WorkTimeEmp.common.Models
 {
-    public class TodoEntity : TableEntity
+    public class WorkTimeEmp
     {
         public int Idemployee { get; set; }
         public DateTime WorkingHour { get; set; }

@@ -2,7 +2,7 @@
   "profiles": {
     "todoAF.Function": {
       "commandName": "Executable",
-      "executablePath": "C:\\Users\\Usuario\\AppData\\Local\\AzureFunctionsTools\\Releases\\3.23.5\\cli\\func.exe",
+      "executablePath": "C:\\Users\\Usuario\\AppData\\Local\\AzureFunctionsTools\\Releases\\3.23.5\\cli_x64\\func.exe",
       "commandLineArgs": "host start"
     }
   }

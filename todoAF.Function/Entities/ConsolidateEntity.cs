@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace todoAF.Function.Entities
+namespace WorkTimeEmp.Function.Entities
 {
     public class ConsolidateEntity
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace todoAF.common.Responses
+namespace WorkTimeEmp.common.Responses
 {
     public class Response
     {
